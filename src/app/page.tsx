@@ -19,7 +19,7 @@ export default function Home() {
       <h1 className="text-4xl">Goals</h1>
       <ul>
         {GOALS.map(({ goal, completed }, index) => (
-          <div className="flex items-center mb-4">
+          <div key={index} className="flex items-center mb-4">
             <input
               id="default-checkbox"
               type="checkbox"
