@@ -41,7 +41,7 @@ jobs:
       - name: Push Standalone Build to Droplet
         run: |
           mkdir -vm 700 $HOME/.ssh
-          ssh-keyscan -Ht ed25519 YOUR.INCREDIBLE.SERVER > $HOME/.ssh/known_hosts
+          ssh-keyscan -Ht ed25519 ${{ secrets.HOST }} > $HOME/.ssh/known_hosts
           echo "${{ secrets.FINGERPRINT }}" > $HOME/.ssh/id_ed25519
           chmod 600 $HOME/.ssh/id_ed25519
           scp build/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/payitfwd.in/build
