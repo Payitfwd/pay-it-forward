@@ -39,12 +39,14 @@ jobs:
           path: build
 
       - name: Push Standalone Build to Droplet
-        run: |
-          mkdir -vm 700 $HOME/.ssh
-          ssh-keyscan -Ht ed25519 ${{ secrets.HOST }} > $HOME/.ssh/known_hosts
-          echo "${{ secrets.FINGERPRINT }}" > $HOME/.ssh/id_ed25519
-          chmod 600 $HOME/.ssh/id_ed25519
-          scp build/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/payitfwd.in/build
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: build/
+          remote_path: /var/www/payitfwd.in/build
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.FINGERPRINT }}
 
       - name: SSH Deploy
         uses: appleboy/ssh-action@master
