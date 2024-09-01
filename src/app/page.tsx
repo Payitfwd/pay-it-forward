@@ -1,5 +1,5 @@
 const GOALS = [
-  { goal: "Company wise reported DSA questions", completed: true },
+  { goal: "Company wise reported DSA questions", completed: false },
   {
     goal: " DSA map from 0 to 100, topics with theory and problems. ",
     completed: false,
