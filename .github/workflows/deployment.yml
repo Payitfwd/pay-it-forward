@@ -23,7 +23,7 @@ jobs:
         run: pnpm install
 
       - name: Build Next.js app
-        run: pnpm run build
+        run: pnpm run build && ls
 
       - name: Push Standalone Build to Droplet
         uses: appleboy/scp-action@v0.1.7
@@ -33,7 +33,7 @@ jobs:
           port: ${{ secrets.PORT }}
           key: ${{ secrets.FINGERPRINT }}
           source: ".next/standalone/*"
-          target: /var/www/payitfwd.com
+          target: "/var/www/payitfwd.com"
 
       - name: SSH Deploy
         uses: appleboy/ssh-action@master
