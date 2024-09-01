@@ -1,0 +1,41 @@
+name: Deployment Workflow
+
+# Trigger this workflow on pushes to the specified branch
+on:
+  push:
+    branches:
+      - your-branch-name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Next.js app
+        run: pnpm run build
+
+      - name: Push Standalone Build to Droplet
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.FINGERPRINT }}
+          source: ".next/standalone/*"
+          target: /var/www/payitfwd.com
+
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }} # Your server's IP address
+          username: ${{ secrets.USERNAME }} # Your server's username
+          key: ${{ secrets.FINGERPRINT }} # Your server's SSH private key
+          script: |
+            cd /var/www/payitfwd.com
+            pm2 delete payitfwd.com 2> /dev/null && pm2 start pnpm --name "payitfwd.com" -- start

@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 const GOALS = [
   { goal: "Company wise reported DSA questions", completed: true },
   {
