@@ -14,21 +14,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # - name: Install pnpm
-      #   uses: pnpm/action-setup@v4
-      #   with:
-      #     version: 9
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Build Next.js app
-        run: npm run build
+        run: pnpm run build
 
       - uses: actions/upload-artifact@v4
         with:
           name: build
-          path: .next/standalone
+          path: |
+            .next
+            node_modules
 
       - uses: actions/download-artifact@v4
         with:
@@ -55,5 +57,5 @@ jobs:
             cd /var/www/payitfwd.com
             mv build/* .
             rm -r build
-            pm2 delete payitfwd.com 2> /dev/null && pm2 start node --name "payitfwd.com" -- server.js
+            pm2 delete payitfwd.com 2> /dev/null && pm2 start pnpm --name "payitfwd.com" -- start
             pm2 save
