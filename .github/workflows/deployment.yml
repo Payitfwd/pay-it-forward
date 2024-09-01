@@ -39,14 +39,12 @@ jobs:
           path: build
 
       - name: Push Standalone Build to Droplet
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
-          key: ${{ secrets.FINGERPRINT }}
-          source: "build/*,build/.next"
-          target: "/var/www/payitfwd.com"
+        run: |
+          mkdir -vm 700 $HOME/.ssh
+          ssh-keyscan -Ht ed25519 YOUR.INCREDIBLE.SERVER > $HOME/.ssh/known_hosts
+          echo "${{ secrets.FINGERPRINT }}" > $HOME/.ssh/id_ed25519
+          chmod 600 $HOME/.ssh/id_ed25519
+          scp build/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/payitfwd.in/build
 
       - name: SSH Deploy
         uses: appleboy/ssh-action@master
