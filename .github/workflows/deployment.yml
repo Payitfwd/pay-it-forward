@@ -41,7 +41,7 @@ jobs:
       - name: Push Standalone Build to Droplet
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr --delete
+          switches: -avzr --delete -I
           path: build/
           remote_path: /var/www/payitfwd.in
           remote_host: ${{ secrets.HOST }}
