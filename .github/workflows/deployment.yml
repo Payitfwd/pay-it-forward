@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.FINGERPRINT }}
-          source: "build/*"
+          source: "build/*,build/.next"
           target: "/var/www/payitfwd.com"
 
       - name: SSH Deploy
