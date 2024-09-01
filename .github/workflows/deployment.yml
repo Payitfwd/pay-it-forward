@@ -43,7 +43,7 @@ jobs:
         with:
           switches: -avzr --delete
           path: build/
-          remote_path: /var/www/payitfwd.in/build
+          remote_path: /var/www/payitfwd.in
           remote_host: ${{ secrets.HOST }}
           remote_user: ${{ secrets.USERNAME }}
           remote_key: ${{ secrets.FINGERPRINT }}
@@ -55,9 +55,7 @@ jobs:
           username: ${{ secrets.USERNAME }} # Your server's username
           key: ${{ secrets.FINGERPRINT }} # Your server's SSH private key
           script: |
-            cd /var/www/payitfwd.com
-            mv build/* .
-            rm -r build
+            cd /var/www/payitfwd.in
             pnpm i
-            pm2 delete payitfwd.com 2> /dev/null && pm2 start pnpm --name "payitfwd.com" -- start
+            pm2 delete payitfwd.in 2> /dev/null && pm2 start pnpm --name "payitfwd.in" -- start
             pm2 save
