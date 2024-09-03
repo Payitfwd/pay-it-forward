@@ -57,5 +57,5 @@ jobs:
           script: |
             cd /var/www/payitfwd.in
             pnpm i
-            pm2 delete payitfwd.in 2> /dev/null && pm2 start npm --name "payitfwd.in" -- start
+            pm2 delete payitfwd.in 2> /dev/null && pm2 start pnpm --name "payitfwd.in" -- start
             pm2 save
