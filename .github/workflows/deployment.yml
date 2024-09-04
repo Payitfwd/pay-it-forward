@@ -23,13 +23,13 @@ jobs:
         run: pnpm install
 
       - name: Build Next.js app
-        run: pnpm build
+        run: pnpm build && mv .next next
 
       - uses: actions/upload-artifact@v4
         with:
           name: build
           path: |
-            .next
+            next
             package.json
             pnpm-lock.yaml
 
@@ -57,5 +57,6 @@ jobs:
           script: |
             cd /var/www/payitfwd.in
             pnpm i
+            mv next .next
             pm2 delete payitfwd.in 2> /dev/null && pm2 start pnpm --name "payitfwd.in" -- start
             pm2 save
