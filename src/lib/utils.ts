@@ -1,30 +1,62 @@
-import React from "react";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { cubicOut } from "svelte/easing";
+import type { TransitionConfig } from "svelte/transition";
 
-/**
- * Gets the string type of the component or core html (JSX) element. React Fragments will return type 'react.fragment'. Priority will be given to the prop '__TYPE'.
- *
- * @param {ReactNode} component - The component to type check
- * @returns {string} - The string representation of the type
- */
-export const typeOfComponent = (component: React.ReactElement) =>
-  component?.props?.__TYPE ||
-  component?.type
-    ?.toString()
-    .replace("Symbol(react.fragment)", "react.fragment") ||
-  undefined;
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
+}
 
-/**
- * Gets all children by specified type. This function will check the prop '__TYPE' first and then the 'type' string to match core html elements. To find a React Fragment, search for type 'react.fragment'.
- *
- * @param {ReactNode} children - JSX children
- * @param {string[]} types - Types of children to match
- * @returns {ReactNode[]} - Array of matching children
- * @example
- * // Finds all occurrences of ToDo (custom component), div, and React Fragment
- * getChildrenByType(children, ['ToDo', 'div', 'react.fragment']);
- */
-export const getChildrenByType = (children: React.ReactNode, types: string[]) =>
-  React.Children.toArray(children).filter(
-    (child) =>
-      !types.includes(typeOfComponent((child as any)?.type?.displayName))
-  );
+type FlyAndScaleParams = {
+	y?: number;
+	x?: number;
+	start?: number;
+	duration?: number;
+};
+
+export const flyAndScale = (
+	node: Element,
+	params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 }
+): TransitionConfig => {
+	const style = getComputedStyle(node);
+	const transform = style.transform === "none" ? "" : style.transform;
+
+	const scaleConversion = (
+		valueA: number,
+		scaleA: [number, number],
+		scaleB: [number, number]
+	) => {
+		const [minA, maxA] = scaleA;
+		const [minB, maxB] = scaleB;
+
+		const percentage = (valueA - minA) / (maxA - minA);
+		const valueB = percentage * (maxB - minB) + minB;
+
+		return valueB;
+	};
+
+	const styleToString = (
+		style: Record<string, number | string | undefined>
+	): string => {
+		return Object.keys(style).reduce((str, key) => {
+			if (style[key] === undefined) return str;
+			return str + `${key}:${style[key]};`;
+		}, "");
+	};
+
+	return {
+		duration: params.duration ?? 200,
+		delay: 0,
+		css: (t) => {
+			const y = scaleConversion(t, [0, 1], [params.y ?? 5, 0]);
+			const x = scaleConversion(t, [0, 1], [params.x ?? 0, 0]);
+			const scale = scaleConversion(t, [0, 1], [params.start ?? 0.95, 1]);
+
+			return styleToString({
+				transform: `${transform} translate3d(${x}px, ${y}px, 0) scale(${scale})`,
+				opacity: t
+			});
+		},
+		easing: cubicOut
+	};
+};
